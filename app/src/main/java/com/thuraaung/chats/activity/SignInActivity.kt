@@ -1,4 +1,4 @@
-package com.thuraaung.chats
+package com.thuraaung.chats.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -14,7 +14,11 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.thuraaung.chats.R
+import com.thuraaung.chats.model.AppUser
+import java.util.*
 
 class SignInActivity : AppCompatActivity() {
 
@@ -64,6 +68,7 @@ class SignInActivity : AppCompatActivity() {
         auth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
+                    saveUser()
                     startApp()
                 } else {
                     Toast.makeText(this,"Sign failed",Toast.LENGTH_SHORT).show()
@@ -71,10 +76,24 @@ class SignInActivity : AppCompatActivity() {
             }
     }
 
+    private fun saveUser() {
+
+        val db = Firebase.firestore
+
+        db.collection("Users")
+            .document(auth.currentUser!!.email.toString())
+            .set(AppUser(
+                uid = auth.currentUser!!.uid,
+                name = auth.currentUser!!.displayName.toString(),
+                email = auth.currentUser!!.email.toString(),
+                lastSignIn = Date(),
+                isOnline = true))
+    }
+
     @Suppress("DEPRECATION")
     private fun startApp() {
         Handler().postDelayed({
-            val test = Intent(this,MainActivity::class.java)
+            val test = Intent(this, MainActivity::class.java)
             startActivity(test)
             finish()
         },500)

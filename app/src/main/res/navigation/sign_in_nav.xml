@@ -7,7 +7,7 @@
 
     <activity
         android:id="@+id/mainActivity"
-        android:name="com.thuraaung.chats.MainActivity"
+        android:name="com.thuraaung.chats.activity.MainActivity"
         android:label="activity_main"
         tools:layout="@layout/activity_main" />
 

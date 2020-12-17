@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Widget.App.LeftCardView" parent="Widget.MaterialComponents.CardView">
+
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.App.LeftCardView</item>
+
+    </style>
+
+    <style name="Widget.App.RightCardView" parent="Widget.MaterialComponents.CardView">
+
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.App.RightCardView</item>
+
+    </style>
+
+</resources>
