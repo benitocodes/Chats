@@ -8,13 +8,13 @@
     <fragment
         android:id="@+id/chats"
         android:name="com.thuraaung.chats.ChatListFragment"
-        android:label="fragment_chat_list"
+        android:label="Chats"
         tools:layout="@layout/fragment_chat_list" />
 
     <fragment
         android:id="@+id/users"
         android:name="com.thuraaung.chats.UserListFragment"
-        android:label="fragment_user_list"
+        android:label="Users"
         tools:layout="@layout/fragment_user_list" />
 
 </navigation>

@@ -1,9 +1,10 @@
-package com.thuraaung.chats
+package com.thuraaung.chats.adapter
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.thuraaung.chats.R
 import com.thuraaung.chats.model.Message
 
 class ChatAdapter(private val messageList : List<Message>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {

@@ -5,4 +5,6 @@
     <string name="chats">Chats</string>
     <string name="users">Users</string>
     <string name="enter_message">Enter message</string>
+    <string name="user_name">User name</string>
+    <string name="email">email</string>
 </resources>

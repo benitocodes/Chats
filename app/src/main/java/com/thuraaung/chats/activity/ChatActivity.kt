@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.thuraaung.chats.ChatAdapter
+import com.thuraaung.chats.adapter.ChatAdapter
 import com.thuraaung.chats.R
 import com.thuraaung.chats.temp.MessageFactory
 

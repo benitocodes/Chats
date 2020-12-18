@@ -16,6 +16,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.thuraaung.chats.Constants.USER_REF
 import com.thuraaung.chats.R
 import com.thuraaung.chats.model.AppUser
 import java.util.*
@@ -44,11 +45,13 @@ class SignInActivity : AppCompatActivity() {
         }
     }
 
+    @Suppress("DEPRECATION")
     private fun signIn() {
         val signInIntent = googleSignInClient.signInIntent
         startActivityForResult(signInIntent, 101)
     }
 
+    @Suppress("DEPRECATION")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -80,13 +83,13 @@ class SignInActivity : AppCompatActivity() {
 
         val db = Firebase.firestore
 
-        db.collection("Users")
-            .document(auth.currentUser!!.email.toString())
+        db.collection(USER_REF)
+            .document(auth.currentUser!!.uid)
             .set(AppUser(
                 uid = auth.currentUser!!.uid,
                 name = auth.currentUser!!.displayName.toString(),
                 email = auth.currentUser!!.email.toString(),
-                lastSignIn = Date(),
+                signInDate = Date(),
                 isOnline = true))
     }
 
