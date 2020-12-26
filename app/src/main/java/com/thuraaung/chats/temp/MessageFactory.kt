@@ -15,15 +15,15 @@ object MessageFactory {
 
         val messageList = mutableListOf<Message>()
 
-        for (i in 1..size) {
-            val message = Message(
-                id = i,
-                message = getRandomMessage(),
-                sender = i % 2,
-                date = Date())
-
-            messageList.add(message)
-        }
+//        for (i in 1..size) {
+//            val message = Message(
+//                id = i,
+//                message = getRandomMessage(),
+//                sender = i % 2,
+//                date = Date())
+//
+//            messageList.add(message)
+//        }
 
         return messageList
     }

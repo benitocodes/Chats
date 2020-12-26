@@ -16,7 +16,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.thuraaung.chats.Constants.USER_REF
+import com.thuraaung.chats.Constants.APP_USERS
 import com.thuraaung.chats.R
 import com.thuraaung.chats.model.AppUser
 import java.util.*
@@ -83,14 +83,16 @@ class SignInActivity : AppCompatActivity() {
 
         val db = Firebase.firestore
 
-        db.collection(USER_REF)
+        db.collection(APP_USERS)
             .document(auth.currentUser!!.uid)
             .set(AppUser(
                 uid = auth.currentUser!!.uid,
                 name = auth.currentUser!!.displayName.toString(),
+                photoUrl = auth.currentUser!!.photoUrl.toString(),
                 email = auth.currentUser!!.email.toString(),
                 signInDate = Date(),
                 isOnline = true))
+
     }
 
     @Suppress("DEPRECATION")

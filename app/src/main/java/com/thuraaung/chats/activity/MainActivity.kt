@@ -27,6 +27,5 @@ class MainActivity : AppCompatActivity() {
             lblMain.text = des.label.toString()
         }
 
-
     }
 }

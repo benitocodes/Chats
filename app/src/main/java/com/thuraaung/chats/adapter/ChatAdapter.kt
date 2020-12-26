@@ -3,11 +3,21 @@ package com.thuraaung.chats.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.thuraaung.chats.R
 import com.thuraaung.chats.model.Message
 
-class ChatAdapter(private val messageList : List<Message>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ChatAdapter(private val currentUid : String) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    companion object {
+
+        const val SEND_MESSAGE = 0
+        const val RECEIVED_MESSAGE = 1
+    }
+
+    private val messageList = mutableListOf<Message>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == 1) {
@@ -22,7 +32,7 @@ class ChatAdapter(private val messageList : List<Message>) : RecyclerView.Adapte
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (getItemViewType(position) == 1)
+        if (getItemViewType(position) == RECEIVED_MESSAGE)
             (holder as LeftViewHolder).bind(messageList[position])
         else
             (holder as RightViewHolder).bind(messageList[position])
@@ -31,17 +41,33 @@ class ChatAdapter(private val messageList : List<Message>) : RecyclerView.Adapte
     override fun getItemCount(): Int = messageList.size
 
     override fun getItemViewType(position: Int): Int {
-        return messageList[position].sender
+        val message = messageList[position]
+        return if(message.sender == currentUid) SEND_MESSAGE else RECEIVED_MESSAGE
+    }
+
+    fun updateMessage(messages : List<Message>) {
+        messageList.clear()
+        messageList.addAll(messages)
+        notifyDataSetChanged()
     }
 
     class LeftViewHolder(view : View) : RecyclerView.ViewHolder(view) {
 
-        fun bind(message : Message) {
+//        private val imgProfile = view.findViewById<ImageView>(R.id.img_profile)
+        private val tvMessage = view.findViewById<TextView>(R.id.tv_message)
 
+        fun bind(message : Message) {
+            tvMessage.text = message.message
         }
     }
 
     class RightViewHolder(view : View) : RecyclerView.ViewHolder(view) {
-        fun bind(message: Message) {}
+
+        private val tvMessage = view.findViewById<TextView>(R.id.tv_message)
+
+        fun bind(message: Message) {
+            tvMessage.text = message.message
+
+        }
     }
 }

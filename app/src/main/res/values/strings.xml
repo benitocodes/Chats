@@ -7,4 +7,6 @@
     <string name="enter_message">Enter message</string>
     <string name="user_name">User name</string>
     <string name="email">email</string>
+    <string name="sample_message">How are you?</string>
+    <string name="sample_date">7:20 PM</string>
 </resources>
