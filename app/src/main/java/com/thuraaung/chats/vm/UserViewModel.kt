@@ -4,16 +4,15 @@ import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
-import com.thuraaung.chats.Constants
 import com.thuraaung.chats.Constants.APP_USERS
 import com.thuraaung.chats.Constants.ROOM_INFO
-import com.thuraaung.chats.IDGenerator
+import com.thuraaung.chats.Constants.ROOM_LIST
 import com.thuraaung.chats.IDGenerator.generateRoomId
 import com.thuraaung.chats.model.AppUser
 import com.thuraaung.chats.model.Room
+import com.thuraaung.chats.model.RoomInfo
+import java.util.*
 
 class UserViewModel @ViewModelInject constructor(
     private val db : FirebaseFirestore) : ViewModel() {
@@ -50,26 +49,37 @@ class UserViewModel @ViewModelInject constructor(
     }
 
     fun getRoomId(uidList : List<String>) : String {
+        return checkRoom(uidList) ?: createNewRoom(uidList)
+    }
 
-        //Todo check room exist for uidList
-
-        val query : Query = db.collection(ROOM_INFO)
-            .whereIn("userList",uidList)
-
-        return createNewRoom(uidList)
+    private fun checkRoom(uidList : List<String>) : String? {
+        return null
     }
 
     private fun createNewRoom(uidList : List<String>) : String {
 
         val roomId = generateRoomId()
 
-        //Todo add new room info for new room
-
-        db.collection(Constants.ROOM_LIST)
+        val roomRef = db.collection(ROOM_LIST)
             .document(roomId)
-            .set(createRoomModel(roomId,uidList))
+
+        val roomInfoRef = db.collection(ROOM_INFO)
+            .document(roomId)
+
+        db.runBatch {
+            it.set(roomRef,createRoomModel(roomId,uidList))
+            it.set(roomInfoRef,createRoomInfo(roomId,uidList))
+        }
 
         return roomId
+    }
+
+    private fun createRoomInfo(roomId: String,uidList: List<String>) : RoomInfo {
+        return RoomInfo(
+            roomId = roomId,
+            userList = uidList,
+            isGroupChat = uidList.size > 2
+        )
     }
 
     private fun createRoomModel(roomId : String, uidList : List<String>) : Room {
@@ -78,6 +88,7 @@ class UserViewModel @ViewModelInject constructor(
             id = roomId ,
             name = "Default room name",
             idList = uidList,
+            date = Date(),
             isGroupChat = uidList.size > 2 )
     }
 

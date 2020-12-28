@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.thuraaung.chats.Constants.ROOM_LIST
 import com.thuraaung.chats.model.Room
 
@@ -19,10 +20,11 @@ class ChatListViewModel @ViewModelInject constructor(
         getChatList()
     }
 
-    fun getChatList()  {
+    private fun getChatList()  {
 
         db.collection(ROOM_LIST)
             .whereArrayContains("idList",auth.currentUser!!.uid)
+            .orderBy("date", Query.Direction.DESCENDING)
             .addSnapshotListener { value, error ->
 
                 if (error != null) {

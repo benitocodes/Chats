@@ -29,11 +29,8 @@ class ChatListFragment : Fragment() {
     lateinit var db : FirebaseFirestore
 
     private val chatListViewModel : ChatListViewModel by activityViewModels()
-    private val roomListAdapter = RoomListAdapter { room ->
-        val intent = Intent(context, ChatActivity::class.java)
-        intent.putExtra(ROOM_ID,room.id)
-        startActivity(intent)
-    }
+
+    private lateinit var roomListAdapter :  RoomListAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -43,6 +40,12 @@ class ChatListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        roomListAdapter = RoomListAdapter(auth,db) { room ->
+            val intent = Intent(context, ChatActivity::class.java)
+            intent.putExtra(ROOM_ID, room.id)
+            startActivity(intent)
+        }
 
         val rvChat = view.findViewById<RecyclerView>(R.id.rv_chat)
         rvChat.apply {

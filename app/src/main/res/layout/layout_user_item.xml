@@ -5,15 +5,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
     android:gravity="center"
-    android:layout_marginStart="4dp"
-    android:layout_marginEnd="4dp"
+    android:layout_margin="4dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/img_profile"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_margin="4dp"
         app:srcCompat="@drawable/ic_baseline_account_circle_24" />
 
@@ -26,7 +25,6 @@
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tv_user_name"
             android:text="@string/user_name"
-            android:layout_margin="4dp"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
@@ -34,7 +32,6 @@
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tv_email"
             android:text="@string/email"
-            android:layout_margin="4dp"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>

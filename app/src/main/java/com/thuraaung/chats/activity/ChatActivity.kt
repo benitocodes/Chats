@@ -25,7 +25,7 @@ class ChatActivity : AppCompatActivity() {
     private val chatViewModel : ChatViewModel by viewModels()
 
     private val roomId : String by lazy {
-        intent.getStringExtra(ROOM_ID) ?: throw Exception("Chat room id cannot be empty")
+        intent.getStringExtra(ROOM_ID) ?: throw Exception("Room id cannot be null")
     }
 
     private lateinit var chatAdapter : ChatAdapter
