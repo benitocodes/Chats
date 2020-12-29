@@ -26,8 +26,9 @@ class ChatViewModel @ViewModelInject constructor(
 
     fun readMessage(roomId : String) {
 
-        db.collection(MESSAGE_LIST)
-            .whereEqualTo("roomId",roomId)
+        db.collection(ROOM_LIST)
+            .document(roomId)
+            .collection(MESSAGE_LIST)
             .orderBy("date", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshot, error ->
 
@@ -52,9 +53,11 @@ class ChatViewModel @ViewModelInject constructor(
                     doOnSuccess : (() -> Unit)? = null,
                     doOnFailure : (() -> Unit)? = null ) {
 
-        val messageModel = createMessage(roomId,message)
+        val messageModel = createMessage(message)
 
-        val messageRef = db.collection(MESSAGE_LIST)
+        val messageRef = db.collection(ROOM_LIST)
+            .document(roomId)
+            .collection(MESSAGE_LIST)
             .document(messageModel.id)
 
         val roomRef = db.collection(ROOM_LIST)
@@ -67,11 +70,10 @@ class ChatViewModel @ViewModelInject constructor(
             .addOnFailureListener { doOnFailure?.invoke() }
     }
 
-    private fun createMessage(roomId: String,message : String) : Message {
+    private fun createMessage(message : String) : Message {
 
         return Message(
             id = generateMessageId(),
-            roomId = roomId,
             message = message,
             sender = auth.currentUser!!.uid,
             date = Date(),

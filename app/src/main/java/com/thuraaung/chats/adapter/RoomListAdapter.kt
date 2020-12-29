@@ -85,8 +85,9 @@ class RoomListAdapter(
                 }
 
 
-            db.collection(MESSAGE_LIST)
-                .whereEqualTo("roomId",room.id)
+            db.collection(ROOM_LIST)
+                .document(room.id)
+                .collection(MESSAGE_LIST)
                 .orderBy("date",Query.Direction.DESCENDING)
                 .limit(1)
                 .addSnapshotListener { value, error ->
