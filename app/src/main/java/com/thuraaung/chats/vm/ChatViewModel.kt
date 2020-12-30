@@ -9,12 +9,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.thuraaung.chats.Constants.MESSAGE_LIST
 import com.thuraaung.chats.Constants.ROOM_LIST
-import com.thuraaung.chats.IDGenerator
 import com.thuraaung.chats.IDGenerator.generateMessageId
-import com.thuraaung.chats.IDGenerator.generateRoomId
-import com.thuraaung.chats.getMessageSender
 import com.thuraaung.chats.model.Message
-import com.thuraaung.chats.model.Room
 import java.util.*
 
 class ChatViewModel @ViewModelInject constructor(
@@ -70,6 +66,15 @@ class ChatViewModel @ViewModelInject constructor(
             .addOnFailureListener { doOnFailure?.invoke() }
     }
 
+    fun seenMessages(roomId : String,messageList : List<Message>) {
+
+        for(message in messageList) {
+            if (message.sender != auth.currentUser!!.uid && !message.seen) {
+                updateMessage(roomId,message)
+            }
+        }
+    }
+
     private fun createMessage(message : String) : Message {
 
         return Message(
@@ -77,9 +82,18 @@ class ChatViewModel @ViewModelInject constructor(
             message = message,
             sender = auth.currentUser!!.uid,
             date = Date(),
-            status = "Default"
+            seen = false
         )
 
+    }
+
+    private fun updateMessage(roomId : String,message : Message) {
+
+        db.collection(ROOM_LIST)
+            .document(roomId)
+            .collection(MESSAGE_LIST)
+            .document(message.id)
+            .update("seen",true)
     }
 
 }

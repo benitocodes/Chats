@@ -7,5 +7,5 @@ data class Message(
     val message : String = "",
     val date : Date = Date(),
     val sender : String = "",
-    val status : String = ""
+    val seen : Boolean = false
 )

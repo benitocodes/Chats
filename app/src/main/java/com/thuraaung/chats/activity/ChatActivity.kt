@@ -60,8 +60,9 @@ class ChatActivity : AppCompatActivity() {
 
         chatViewModel.readMessage(roomId)
 
-        chatViewModel.messageList.observe(this, {
-            chatAdapter.updateMessage(it)
+        chatViewModel.messageList.observe(this, { messageList ->
+            chatViewModel.seenMessages(roomId,messageList)
+            chatAdapter.updateMessage(messageList)
         })
 
     }

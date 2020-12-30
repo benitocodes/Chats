@@ -61,11 +61,25 @@ class ChatAdapter(private val currentUid : String) : RecyclerView.Adapter<Recycl
         }
     }
 
-    class RightViewHolder(view : View) : RecyclerView.ViewHolder(view) {
+    inner class RightViewHolder(view : View) : RecyclerView.ViewHolder(view) {
 
         private val tvMessage = view.findViewById<TextView>(R.id.tv_message)
+        private val tvStatus = view.findViewById<TextView>(R.id.tv_status)
 
         fun bind(message: Message) {
+
+            val isLastMessage = adapterPosition == 0
+
+            if (isLastMessage) {
+
+                tvStatus.apply {
+                    text = if (message.seen) "Seen" else "Sent"
+                    visibility = View.VISIBLE
+                }
+
+            } else {
+                tvStatus.visibility = View.GONE
+            }
             tvMessage.text = message.message
 
         }
