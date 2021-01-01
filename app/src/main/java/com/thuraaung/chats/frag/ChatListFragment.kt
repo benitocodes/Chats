@@ -41,7 +41,7 @@ class ChatListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        roomListAdapter = RoomListAdapter(auth,db) { room ->
+        roomListAdapter = RoomListAdapter(requireContext(),auth,db) { room ->
             val intent = Intent(context, ChatActivity::class.java)
             intent.putExtra(ROOM_ID, room.id)
             startActivity(intent)
@@ -53,7 +53,7 @@ class ChatListFragment : Fragment() {
             adapter = roomListAdapter
         }
 
-        chatListViewModel.roomList.observe(viewLifecycleOwner,{ list ->
+        chatListViewModel.roomDataList.observe(viewLifecycleOwner,{ list ->
             roomListAdapter.updateRoomList(list)
             Toast.makeText(context,"Room list size : ${list.size}",Toast.LENGTH_SHORT).show()
         })

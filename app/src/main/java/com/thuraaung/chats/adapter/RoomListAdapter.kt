@@ -1,5 +1,7 @@
 package com.thuraaung.chats.adapter
 
+import android.content.Context
+import android.graphics.Typeface
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +23,7 @@ import com.thuraaung.chats.model.Message
 import com.thuraaung.chats.model.Room
 
 class RoomListAdapter(
+    private val context : Context,
     private val auth : FirebaseAuth,
     private val db : FirebaseFirestore,
     private val clickListener : ((Room) -> Unit)? = null) : RecyclerView.Adapter<RoomListAdapter.ChatListViewHolder>() {
@@ -50,6 +53,7 @@ class RoomListAdapter(
         private val imgUser = view.findViewById<ImageView>(R.id.img_user)
         private val tvMessage = view.findViewById<TextView>(R.id.tv_message)
         private val tvUserName = view.findViewById<TextView>(R.id.tv_user_name)
+        private val imgStatus = view.findViewById<ImageView>(R.id.img_status)
 
         init {
             view.setOnClickListener { clickListener?.invoke(roomList[adapterPosition]) }
@@ -98,12 +102,27 @@ class RoomListAdapter(
                     }
 
                     value?.let {
+
                         for(data in it.iterator()) {
                             val message = data.toObject(Message::class.java)
-                            tvMessage.text = message.message
-                            Log.d("Latest message","Getting latest message success")
 
+                            if (auth.currentUser!!.uid != message.sender && !message.seen) {
+
+                                imgStatus.visibility = View.VISIBLE
+                                tvMessage.setTextColor(context.getColor(R.color.black))
+
+                            } else {
+
+                                imgStatus.visibility = View.INVISIBLE
+                                tvMessage.setTextColor(context.getColor(R.color.grey))
+
+                            }
+                            tvMessage.text = message.message
+
+
+                            Log.d("Latest message","Getting latest message success")
                         }
+
                     }
 
                 }
