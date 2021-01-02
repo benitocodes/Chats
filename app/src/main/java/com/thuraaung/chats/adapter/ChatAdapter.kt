@@ -7,9 +7,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.thuraaung.chats.R
+import com.thuraaung.chats.model.AppUser
 import com.thuraaung.chats.model.Message
 
-class ChatAdapter(private val currentUid : String) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ChatAdapter(
+    private val currentUser : String) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
 
@@ -42,7 +44,7 @@ class ChatAdapter(private val currentUid : String) : RecyclerView.Adapter<Recycl
 
     override fun getItemViewType(position: Int): Int {
         val message = messageList[position]
-        return if(message.sender == currentUid) SEND_MESSAGE else RECEIVED_MESSAGE
+        return if(message.sender == currentUser) SEND_MESSAGE else RECEIVED_MESSAGE
     }
 
     fun updateMessage(messages : List<Message>) {
@@ -53,7 +55,7 @@ class ChatAdapter(private val currentUid : String) : RecyclerView.Adapter<Recycl
 
     class LeftViewHolder(view : View) : RecyclerView.ViewHolder(view) {
 
-//        private val imgProfile = view.findViewById<ImageView>(R.id.img_profile)
+        private val imgProfile = view.findViewById<ImageView>(R.id.img_profile)
         private val tvMessage = view.findViewById<TextView>(R.id.tv_message)
 
         fun bind(message : Message) {

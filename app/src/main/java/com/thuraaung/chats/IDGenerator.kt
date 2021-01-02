@@ -13,6 +13,6 @@ object IDGenerator {
     }
 
     fun generateMessageId() : String {
-        return "Message_${getUUID()}"
+        return getUUID()
     }
 }

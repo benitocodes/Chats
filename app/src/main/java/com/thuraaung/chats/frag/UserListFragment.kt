@@ -28,9 +28,11 @@ class UserListFragment : Fragment() {
 
     private val userAdapter = UserAdapter { user ->
 
-        val roomId = viewModel.getRoomId(listOf(user.uid,auth.currentUser!!.uid))
+//        val roomId = viewModel.getRoomId(listOf(user.uid,auth.currentUser!!.uid))
+
+
         val intent = Intent(context,ChatActivity::class.java)
-        intent.putExtra(ROOM_ID,roomId)
+        intent.putExtra("uid",user.uid)
         startActivity(intent)
     }
 

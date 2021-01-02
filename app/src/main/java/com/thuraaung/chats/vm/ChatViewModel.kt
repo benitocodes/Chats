@@ -7,9 +7,9 @@ import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.thuraaung.chats.Constants.MESSAGE_LIST
-import com.thuraaung.chats.Constants.ROOM_LIST
+import com.thuraaung.chats.Constants.APP_USERS
 import com.thuraaung.chats.IDGenerator.generateMessageId
+import com.thuraaung.chats.model.AppUser
 import com.thuraaung.chats.model.Message
 import java.util.*
 
@@ -19,14 +19,15 @@ class ChatViewModel @ViewModelInject constructor(
 ) : ViewModel() {
 
     val messageList = MutableLiveData<List<Message>>()
+    val userData = MutableLiveData<AppUser?>()
 
-    fun readMessage(roomId : String) {
+    fun readMessage(uid : String) {
 
-        db.collection(ROOM_LIST)
-            .document(roomId)
-            .collection(MESSAGE_LIST)
+        db.collection(APP_USERS)
+            .document(auth.currentUser!!.uid)
+            .collection(uid)
             .orderBy("date", Query.Direction.DESCENDING)
-            .addSnapshotListener { snapshot, error ->
+            .addSnapshotListener { snapshot , error ->
 
                 if (error != null) {
                     Log.d(ChatViewModel::class.simpleName, "Read message failed")
@@ -41,38 +42,51 @@ class ChatViewModel @ViewModelInject constructor(
                     }
                     messageList
                 } ?: listOf())
-
             }
     }
 
-    fun sendMessage(roomId: String,message : String,
-                    doOnSuccess : (() -> Unit)? = null,
-                    doOnFailure : (() -> Unit)? = null ) {
+    fun sendMessage(uid : String,message : String,doOnSuccess: (() -> Unit)?,doOnFailure: (() -> Unit)?) {
 
-        val messageModel = createMessage(message)
+        val msgModel = createMessage(message)
 
-        val messageRef = db.collection(ROOM_LIST)
-            .document(roomId)
-            .collection(MESSAGE_LIST)
-            .document(messageModel.id)
+        val userListRef = db.collection(APP_USERS)
 
-        val roomRef = db.collection(ROOM_LIST)
-            .document(roomId)
+        val currentUser = userListRef
+            .document(auth.currentUser!!.uid)
+            .collection(uid)
+            .document(msgModel.id)
+
+        val otherUser = userListRef
+            .document(uid)
+            .collection(auth.currentUser!!.uid)
+            .document(msgModel.id)
 
         db.runBatch { batch ->
-            batch.set(messageRef,messageModel)
-            batch.update(roomRef,"date",Date()) }
+            batch.set(currentUser,msgModel)
+            batch.set(otherUser,msgModel) }
             .addOnSuccessListener { doOnSuccess?.invoke() }
             .addOnFailureListener { doOnFailure?.invoke() }
+
+
     }
 
-    fun seenMessages(roomId : String,messageList : List<Message>) {
+    fun seenMessages(uid : String,messageList : List<Message>) {
 
         for(message in messageList) {
             if (message.sender != auth.currentUser!!.uid && !message.seen) {
-                updateMessage(roomId,message)
+                updateMessage(uid,message)
             }
         }
+    }
+
+    private fun updateMessage(uid : String,message : Message) {
+
+        db.collection(APP_USERS)
+            .document(uid)
+            .collection(auth.currentUser!!.uid)
+            .document(message.id)
+            .update("seen",true)
+
     }
 
     private fun createMessage(message : String) : Message {
@@ -87,13 +101,19 @@ class ChatViewModel @ViewModelInject constructor(
 
     }
 
-    private fun updateMessage(roomId : String,message : Message) {
+    fun getUser(uid : String) {
 
-        db.collection(ROOM_LIST)
-            .document(roomId)
-            .collection(MESSAGE_LIST)
-            .document(message.id)
-            .update("seen",true)
+        db.collection(APP_USERS)
+            .document(uid)
+            .addSnapshotListener { value, error ->
+
+                if (error != null) {
+                    return@addSnapshotListener
+                }
+
+                userData.postValue(value?.toObject(AppUser::class.java))
+
+            }
     }
 
 }
