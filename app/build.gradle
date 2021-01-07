@@ -40,6 +40,10 @@ android {
             experimental = true
         }
     }
+
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {

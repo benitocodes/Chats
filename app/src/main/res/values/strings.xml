@@ -9,4 +9,6 @@
     <string name="email">email</string>
     <string name="sample_message">How are you?</string>
     <string name="sample_date">7:20 PM</string>
+    <string name="option_gallery">Choose image from gallery</string>
+    <string name="option_camera">Take new picture</string>
 </resources>

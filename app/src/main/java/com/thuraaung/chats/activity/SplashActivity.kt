@@ -10,7 +10,6 @@ import com.thuraaung.chats.R
 
 class SplashActivity : AppCompatActivity() {
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
@@ -25,6 +24,6 @@ class SplashActivity : AppCompatActivity() {
                 startActivity(intent)
             }
             finish()
-        },2000)
+        },1500)
     }
 }

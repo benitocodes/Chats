@@ -13,7 +13,7 @@ import com.thuraaung.chats.model.AppUser
 
 class UserAdapter(private val userClickListener : ((AppUser) -> Unit)? = null) : RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
 
-    private val userList = mutableListOf<AppUser>()
+    private var userList = emptyList<AppUser>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -28,8 +28,7 @@ class UserAdapter(private val userClickListener : ((AppUser) -> Unit)? = null) :
     override fun getItemCount(): Int = userList.size
 
     fun updateUserList(users : List<AppUser>) {
-        userList.clear()
-        userList.addAll(users)
+        userList = users
         notifyDataSetChanged()
     }
 

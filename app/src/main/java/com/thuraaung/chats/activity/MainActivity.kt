@@ -1,31 +1,76 @@
 package com.thuraaung.chats.activity
 
 import android.os.Bundle
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import coil.load
+import coil.transform.CircleCropTransformation
+import com.google.android.material.tabs.TabLayoutMediator
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.thuraaung.chats.Constants.APP_USERS
 import com.thuraaung.chats.R
+import com.thuraaung.chats.databinding.ActivityMainBinding
+import com.thuraaung.chats.frag.ChatListFragment
+import com.thuraaung.chats.frag.UserListFragment
+import com.thuraaung.chats.model.AppUser
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var db: FirebaseFirestore
+    @Inject
+    lateinit var auth: FirebaseAuth
+
+    private lateinit var binding: ActivityMainBinding
+
+    companion object {
+        private val TITLES = listOf("Chats","Users")
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val lblMain = findViewById<TextView>(R.id.lbl_main)
+        binding.pager.adapter = MyPagerAdapter(this)
+        TabLayoutMediator(binding.tabLayout, binding.pager) { tab, position ->
+            tab.text = TITLES[position]
+        }.attach()
 
-        val navHostFragment =
-                supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        val navController = navHostFragment.navController
-        findViewById<BottomNavigationView>(R.id.bottom_nav_view)
-                .setupWithNavController(navController)
-        
-        navController.addOnDestinationChangedListener { _, des , _  ->
-            lblMain.text = des.label.toString()
-        }
+        db.collection(APP_USERS)
+            .document(auth.currentUser!!.uid)
+            .addSnapshotListener { value, error ->
+                if (error != null) {
+                    return@addSnapshotListener
+                }
 
+                val user = value!!.toObject(AppUser::class.java)!!
+                binding.imgProfile.load(user.photoUrl) {
+                    crossfade(true)
+                    placeholder(R.drawable.ic_baseline_account_circle_24)
+                    transformations(CircleCropTransformation())
+                }
+            }
+
+    }
+
+}
+
+class MyPagerAdapter(activity: FragmentActivity) : FragmentStateAdapter(activity) {
+
+    private val fragmentList = listOf(
+        ChatListFragment(),
+        UserListFragment())
+
+    override fun getItemCount() = fragmentList.size
+
+    override fun createFragment(position: Int): Fragment {
+        return fragmentList[position]
     }
 }

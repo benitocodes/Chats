@@ -8,5 +8,7 @@ object Constants {
     const val MESSAGE_LIST = "MESSAGE_LIST"
 
     const val ROOM_ID = "ROOM_ID"
+    const val CHAT_LIST = "CHAT_LIST"
+    const val CHAT_INFO = "CHAT_INFO"
 
 }

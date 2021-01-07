@@ -1,8 +1,6 @@
 package com.thuraaung.chats.adapter
 
 import android.content.Context
-import android.graphics.Typeface
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,20 +13,22 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.thuraaung.chats.Constants.APP_USERS
+import com.thuraaung.chats.Constants.CHAT_INFO
+import com.thuraaung.chats.Constants.CHAT_LIST
 import com.thuraaung.chats.Constants.MESSAGE_LIST
-import com.thuraaung.chats.Constants.ROOM_LIST
+import com.thuraaung.chats.DateFormatter
 import com.thuraaung.chats.R
 import com.thuraaung.chats.model.AppUser
+import com.thuraaung.chats.model.Chat
 import com.thuraaung.chats.model.Message
-import com.thuraaung.chats.model.Room
 
-class RoomListAdapter(
+class ChatListAdapter(
     private val context : Context,
     private val auth : FirebaseAuth,
     private val db : FirebaseFirestore,
-    private val clickListener : ((Room) -> Unit)? = null) : RecyclerView.Adapter<RoomListAdapter.ChatListViewHolder>() {
+    private val clickListener : ((Chat) -> Unit)? = null) : RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>() {
 
-    private val roomList = mutableListOf<Room>()
+    private var uidList = emptyList<Chat>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatListViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -37,14 +37,13 @@ class RoomListAdapter(
     }
 
     override fun onBindViewHolder(holder: ChatListViewHolder, position: Int) {
-        holder.bind(roomList[position])
+        holder.bind(uidList[position])
     }
 
-    override fun getItemCount(): Int = roomList.size
+    override fun getItemCount(): Int = uidList.size
 
-    fun updateRoomList(rooms : List<Room>) {
-        roomList.clear()
-        roomList.addAll(rooms)
+    fun updateRoomList(chats : List<Chat>) {
+        uidList = chats
         notifyDataSetChanged()
     }
 
@@ -54,73 +53,59 @@ class RoomListAdapter(
         private val tvMessage = view.findViewById<TextView>(R.id.tv_message)
         private val tvUserName = view.findViewById<TextView>(R.id.tv_user_name)
         private val imgStatus = view.findViewById<ImageView>(R.id.img_status)
+        private val tvChatDate = view.findViewById<TextView>(R.id.tv_chat_date)
 
         init {
-            view.setOnClickListener { clickListener?.invoke(roomList[adapterPosition]) }
+            view.setOnClickListener { clickListener?.invoke(uidList[adapterPosition]) }
         }
 
-        fun bind(room : Room) {
+        fun bind(chat : Chat) {
 
-            val uid : String = room.idList.filter { auth.currentUser!!.uid != it }[0]
+            tvChatDate.text = DateFormatter.formatDate(chat.date)
 
             db.collection(APP_USERS)
-                .document(uid)
-                .addSnapshotListener { value , error ->
-
+                .document(chat.uid)
+                .addSnapshotListener { value, error ->
                     if (error != null) {
-                        Log.d(RoomListAdapter::class.java.simpleName,"Read user failed")
                         return@addSnapshotListener
                     }
 
-                    value?.let {
+                    val appUser = value!!.toObject(AppUser::class.java)!!
+                    tvUserName.text = appUser.name
 
-                        val user = it.toObject(AppUser::class.java)!!
-                        tvUserName.text = user.name
-
-                        imgUser.load(user.photoUrl) {
-                            crossfade(true)
-                            placeholder(R.drawable.ic_baseline_account_circle_24)
-                            transformations(CircleCropTransformation())
-                        }
-
-
-                    } ?: Log.d(RoomListAdapter::class.java.simpleName,"Read user failed")
-
+                    imgUser.load(appUser.photoUrl) {
+                        crossfade(true)
+                        placeholder(R.drawable.ic_baseline_account_circle_24)
+                        transformations(CircleCropTransformation())
+                    }
                 }
 
-
-            db.collection(ROOM_LIST)
-                .document(room.id)
+            db.collection(CHAT_INFO)
+                .document(auth.currentUser!!.uid)
+                .collection(CHAT_LIST)
+                .document(chat.uid)
                 .collection(MESSAGE_LIST)
-                .orderBy("date",Query.Direction.DESCENDING)
+                .orderBy("date", Query.Direction.DESCENDING)
                 .limit(1)
                 .addSnapshotListener { value, error ->
-
                     if (error != null) {
-                        Log.d("Latest message","Getting latest message failed")
                         return@addSnapshotListener
                     }
 
                     value?.let {
 
                         for(data in it.iterator()) {
+
                             val message = data.toObject(Message::class.java)
-
                             if (auth.currentUser!!.uid != message.sender && !message.seen) {
-
                                 imgStatus.visibility = View.VISIBLE
-                                tvMessage.setTextColor(context.getColor(R.color.black))
-
+                                tvMessage.setTextColor(context.getColor(R.color.black_900))
                             } else {
-
                                 imgStatus.visibility = View.INVISIBLE
-                                tvMessage.setTextColor(context.getColor(R.color.grey))
-
+                                tvMessage.setTextColor(context.getColor(R.color.grey_700))
                             }
+
                             tvMessage.text = message.message
-
-
-                            Log.d("Latest message","Getting latest message success")
                         }
 
                     }

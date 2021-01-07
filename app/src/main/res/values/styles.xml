@@ -2,15 +2,25 @@
 <resources>
 
     <style name="Widget.App.LeftCardView" parent="Widget.MaterialComponents.CardView">
-
         <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.App.LeftCardView</item>
-
     </style>
 
     <style name="Widget.App.RightCardView" parent="Widget.MaterialComponents.CardView">
-
         <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.App.RightCardView</item>
+<!--        <item name="materialThemeOverlay">@style/ThemeOverlay.App.CardView</item>-->
+    </style>
 
+<!--    <style name="ThemeOverlay.App.CardView" parent="">-->
+<!--        <item name="background">?attr/colorSecondary</item>-->
+<!--    </style>-->
+
+    <style name="Widget.App.TabLayout" parent="Widget.MaterialComponents.TabLayout">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.TabLayout</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.App.TabLayout</item>
+    </style>
+
+    <style name="ThemeOverlay.App.TabLayout" parent="">
+        <item name="textAllCaps">false</item>
     </style>
 
 </resources>

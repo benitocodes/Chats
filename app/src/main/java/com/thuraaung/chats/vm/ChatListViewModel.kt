@@ -2,79 +2,58 @@ package com.thuraaung.chats.vm
 
 import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.distinctUntilChanged
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.thuraaung.chats.Constants.MESSAGE_LIST
-import com.thuraaung.chats.Constants.ROOM_LIST
-import com.thuraaung.chats.model.Room
+import com.thuraaung.chats.Constants.CHAT_INFO
+import com.thuraaung.chats.Constants.CHAT_LIST
+import com.thuraaung.chats.model.Chat
+import java.util.*
 
 class ChatListViewModel @ViewModelInject constructor(
     private val auth : FirebaseAuth,
     private val db : FirebaseFirestore
 ): ViewModel() {
 
-    val roomDataList = MutableLiveData<List<Room>>()
-    val unReadMessage = MutableLiveData(0)
+    private val _chatDataList = MutableLiveData<List<Chat>>()
+    val chatDataList : LiveData<List<Chat>> = _chatDataList.distinctUntilChanged()
 
     init {
-        getChatList()
+        Log.d("Chat List","Chat list view model : ${UUID.randomUUID()}")
+        loadChatList()
     }
 
-    private fun getChatList()  {
+    private fun loadChatList() {
 
-        db.collection(ROOM_LIST)
-            .whereArrayContains("idList",auth.currentUser!!.uid)
-            .orderBy("date", Query.Direction.DESCENDING)
+        db.collection(CHAT_INFO)
+            .document(auth.currentUser!!.uid)
+            .collection(CHAT_LIST)
+            .orderBy("date",Query.Direction.DESCENDING)
             .addSnapshotListener { value, error ->
 
-                if (error != null) {
+                if ( error != null) {
                     return@addSnapshotListener
                 }
 
-                val roomList = value?.let {
+                val chatList = value?.let {
 
-                    val tempRooms = mutableListOf<Room>()
+                    val tempChatList = mutableListOf<Chat>()
                     for(data in it.documents) {
-                        val room = data.toObject(Room::class.java)!!
-                        tempRooms.add(room)
+                        val chat = data.toObject(Chat::class.java)!!
+                        tempChatList.add(chat)
                     }
-
-                    tempRooms
+                    tempChatList
 
                 } ?: listOf()
 
-                roomDataList.postValue(roomList)
+                _chatDataList.postValue(chatList)
 
             }
+
     }
 
-    private fun countUnreadMessage() {
-
-        roomDataList.value?.forEach { room ->
-            getUnreadMessage(room.id)
-        }
-    }
-
-
-    private fun getUnreadMessage(roomId : String) {
-
-        db.collection(ROOM_LIST)
-            .document(roomId)
-            .collection(MESSAGE_LIST)
-            .whereEqualTo("seen",false)
-            .whereNotEqualTo("sender",auth.currentUser!!.uid)
-            .addSnapshotListener { value, error ->
-
-//                if (error != null) {
-//                    Log.d("Unread message","Unread message failed")
-//                    return@addSnapshotListener
-//                }
-
-                unReadMessage.postValue( value?.size() ?: 0 )
-                Log.d("Unread message","Unread message size : ${value?.size() ?: 0}")
-            }
-    }
 }
