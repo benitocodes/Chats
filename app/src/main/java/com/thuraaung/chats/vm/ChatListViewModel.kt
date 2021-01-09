@@ -1,6 +1,5 @@
 package com.thuraaung.chats.vm
 
-import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -23,7 +22,6 @@ class ChatListViewModel @ViewModelInject constructor(
     val chatDataList : LiveData<List<Chat>> = _chatDataList.distinctUntilChanged()
 
     init {
-        Log.d("Chat List","Chat list view model : ${UUID.randomUUID()}")
         loadChatList()
     }
 

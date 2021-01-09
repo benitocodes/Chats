@@ -1,22 +1,30 @@
 package com.thuraaung.chats.vm
 
-import android.net.Uri
 import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.google.firebase.ktx.Firebase
 import com.thuraaung.chats.Constants.APP_USERS
 import com.thuraaung.chats.Constants.CHAT_INFO
 import com.thuraaung.chats.Constants.CHAT_LIST
 import com.thuraaung.chats.Constants.MESSAGE_LIST
+import com.thuraaung.chats.Constants.TOKEN
 import com.thuraaung.chats.IDGenerator.generateMessageId
+import com.thuraaung.chats.currentUid
 import com.thuraaung.chats.model.AppUser
 import com.thuraaung.chats.model.Chat
 import com.thuraaung.chats.model.Message
+import com.thuraaung.chats.model.Token
+import com.thuraaung.chats.noti.NotificationData
+import com.thuraaung.chats.noti.PushNotification
+import com.thuraaung.chats.noti.RetrofitInstance
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.*
 
 class ChatViewModel @ViewModelInject constructor(
@@ -25,7 +33,8 @@ class ChatViewModel @ViewModelInject constructor(
 ) : ViewModel() {
 
     val messageList = MutableLiveData<List<Message>>()
-    val userData = MutableLiveData<AppUser?>()
+    private val _chattingUser = MutableLiveData<AppUser>()
+    val chattingUser : LiveData<AppUser> = _chattingUser
 
     fun readMessage(uid : String) {
 
@@ -78,7 +87,39 @@ class ChatViewModel @ViewModelInject constructor(
             batch.set(ccc,msgModel)
             batch.set(aaRef,Chat(auth.currentUser!!.uid,Date()))
             batch.set(aaa,msgModel) }
-            .addOnSuccessListener { doOnSuccess?.invoke() }
+            .addOnSuccessListener {
+                sendNotificationToken(
+                    sendTo = uid,
+                    message = message,
+                    doOnSuccess = doOnSuccess,
+                    doOnFailure = doOnFailure)
+            }
+            .addOnFailureListener {
+                doOnFailure?.invoke()
+            }
+    }
+
+    private fun sendNotificationToken(
+        sendTo : String,
+        message: String,
+        doOnSuccess: (() -> Unit)? = null,
+        doOnFailure: (() -> Unit)? = null
+    ) {
+
+        db.collection(TOKEN)
+            .document(sendTo)
+            .get()
+            .addOnSuccessListener { docSnapShot ->
+                val token = docSnapShot.toObject(Token::class.java)
+                token?.let {
+                    val data = NotificationData(
+                        uid = auth.currentUid(),
+                        title = auth.currentUser!!.displayName!!,
+                        message = message)
+                    pushNotification(PushNotification(data = data,to = it.token))
+                }
+                doOnSuccess?.invoke()
+            }
             .addOnFailureListener { doOnFailure?.invoke() }
     }
 
@@ -86,6 +127,25 @@ class ChatViewModel @ViewModelInject constructor(
         messageList
             .filter { message -> uid == message.sender && !message.seen }
             .forEach { message -> updateMessage(uid,message) }
+    }
+
+    private fun pushNotification(postNotification : PushNotification) {
+
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+
+                val response = RetrofitInstance.api.postNotification(postNotification)
+                if (response.isSuccessful) {
+                    Log.d("Send notification","Send notification success")
+                } else {
+                    Log.d("Send notification","Send notification failed")
+                }
+
+            } catch (e : Exception) {
+                Log.e("Send notification","Send notification failed")
+            }
+        }
+
     }
 
     private fun updateMessage(
@@ -132,7 +192,7 @@ class ChatViewModel @ViewModelInject constructor(
                 if (error != null) {
                     return@addSnapshotListener
                 }
-                userData.postValue(value?.toObject(AppUser::class.java))
+                _chattingUser.postValue(value!!.toObject(AppUser::class.java))
             }
     }
 

@@ -11,4 +11,4 @@ data class AppUser(
     val photoUrl : String = "",
     val email : String = "",
     val signInDate : Date = Date(),
-    val isOnline : Boolean = false) : Parcelable
+    val online : Boolean = false) : Parcelable

@@ -91,7 +91,7 @@ class SignInActivity : AppCompatActivity() {
                 photoUrl = auth.currentUser!!.photoUrl.toString(),
                 email = auth.currentUser!!.email.toString(),
                 signInDate = Date(),
-                isOnline = true))
+                online = true))
 
     }
 

@@ -5,12 +5,6 @@ import com.thuraaung.chats.model.AppUser
 import java.util.*
 
 
-fun FirebaseAuth.getCurrentAppUser() : AppUser {
-    return AppUser(
-        uid = currentUser!!.uid,
-        name = currentUser!!.displayName.toString(),
-        photoUrl = currentUser!!.photoUrl.toString(),
-        email = currentUser!!.email.toString(),
-        signInDate = Date(),
-        isOnline = true)
+fun FirebaseAuth.currentUid() : String {
+    return currentUser?.uid ?: throw Exception("Current user not found")
 }

@@ -15,6 +15,7 @@ import com.thuraaung.chats.vm.ChatViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+
 @AndroidEntryPoint
 class ChatActivity : AppCompatActivity() {
 
@@ -27,7 +28,7 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var binding: ActivityChatBinding
     private lateinit var chatAdapter: ChatAdapter
     private val uid: String by lazy {
-        intent.getStringExtra("uid") ?: throw Exception("Room id cannot be null")
+        intent.getStringExtra("uid") ?: throw Exception("uid cannot be null")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +43,7 @@ class ChatActivity : AppCompatActivity() {
         showUserData()
         readMessageList()
 
-        chatAdapter = ChatAdapter(auth.currentUser!!.uid, auth, db)
+        chatAdapter = ChatAdapter(auth, db)
 
         binding.rvChat.apply {
             layoutManager = LinearLayoutManager(context).apply {
@@ -61,6 +62,7 @@ class ChatActivity : AppCompatActivity() {
             val message = binding.etMessage.text.toString().trim()
             binding.etMessage.text.clear()
             if (message.isNotEmpty() && message.isNotBlank()) {
+
                 chatViewModel.sendMessage(
                     uid = uid,
                     message = message,
@@ -74,7 +76,7 @@ class ChatActivity : AppCompatActivity() {
 
     private fun showUserData() {
 
-        chatViewModel.userData.observe(this) { user ->
+        chatViewModel.chattingUser.observe(this) { user ->
             user?.let {
                 binding.layoutToolBar.lblUser.text = user.name
                 binding.layoutToolBar.imgUser.load(user.photoUrl) {

@@ -11,4 +11,5 @@
     <string name="sample_date">7:20 PM</string>
     <string name="option_gallery">Choose image from gallery</string>
     <string name="option_camera">Take new picture</string>
+    <string name="profile_image">Profile image</string>
 </resources>

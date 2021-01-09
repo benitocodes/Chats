@@ -12,11 +12,12 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.thuraaung.chats.Constants.APP_USERS
 import com.thuraaung.chats.R
+import com.thuraaung.chats.databinding.LayoutLeftMessageBinding
+import com.thuraaung.chats.databinding.LayoutRightMessageBinding
 import com.thuraaung.chats.model.AppUser
 import com.thuraaung.chats.model.Message
 
 class ChatAdapter(
-    private val currentUser : String,
     private val auth : FirebaseAuth,
     private val db : FirebaseFirestore) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -32,14 +33,15 @@ class ChatAdapter(
 
         return when(viewType) {
             RECEIVED_MESSAGE -> {
-                val view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.layout_left_message,parent,false)
-                LeftMessageViewHolder(view)
+
+                val binding = LayoutLeftMessageBinding
+                    .inflate(LayoutInflater.from(parent.context),parent,false)
+                LeftMessageViewHolder(binding)
             }
             else -> {
-                val view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.layout_right_message,parent,false)
-                RightMessageViewHolder(view)
+                val binding = LayoutRightMessageBinding
+                    .inflate(LayoutInflater.from(parent.context),parent,false)
+                RightMessageViewHolder(binding)
             }
         }
     }
@@ -63,25 +65,18 @@ class ChatAdapter(
         notifyDataSetChanged()
     }
 
-    inner class LeftMessageViewHolder(view : View) : RecyclerView.ViewHolder(view) {
-
-        private val imgProfile = view.findViewById<ImageView>(R.id.img_profile)
-        private val tvMessage = view.findViewById<TextView>(R.id.tv_message)
+    inner class LeftMessageViewHolder(private val binding : LayoutLeftMessageBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(message : Message) {
-            tvMessage.text = message.message
-
+            binding.tvMessage.text = message.message
             db.collection(APP_USERS)
                 .document(message.sender)
                 .addSnapshotListener { value, error ->
-
                     if (error != null) {
                         return@addSnapshotListener
                     }
-
                     val user = value!!.toObject(AppUser::class.java)!!
-
-                    imgProfile.load(user.photoUrl) {
+                    binding.imgProfile.load(user.photoUrl) {
                         crossfade(true)
                         placeholder(R.drawable.ic_baseline_account_circle_24)
                         transformations(CircleCropTransformation())
@@ -91,27 +86,19 @@ class ChatAdapter(
         }
     }
 
-    inner class RightMessageViewHolder(view : View) : RecyclerView.ViewHolder(view) {
-
-        private val tvMessage = view.findViewById<TextView>(R.id.tv_message)
-        private val tvStatus = view.findViewById<TextView>(R.id.tv_status)
+    inner class RightMessageViewHolder(private val binding : LayoutRightMessageBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(message: Message) {
-
             val isLastMessage = adapterPosition == 0
-
             if (isLastMessage) {
-
-                tvStatus.apply {
+                binding.tvStatus.apply {
                     text = if (message.seen) "Seen" else "Sent"
                     visibility = View.VISIBLE
                 }
-
             } else {
-                tvStatus.visibility = View.GONE
+                binding.tvStatus.visibility = View.GONE
             }
-            tvMessage.text = message.message
-
+            binding.tvMessage.text = message.message
         }
     }
 

@@ -8,8 +8,12 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.ktx.messaging
 import com.thuraaung.chats.Constants.APP_USERS
 import com.thuraaung.chats.R
 import com.thuraaung.chats.databinding.ActivityMainBinding
@@ -35,11 +39,17 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+//        FirebaseMessaging.getInstance().subscribeToTopic(TOPIC)
+
+        Firebase.messaging.isAutoInitEnabled = true // enable the token auto initialization
+        FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(true)
+
         binding.pager.adapter = MyPagerAdapter(this)
-        TabLayoutMediator(binding.tabLayout, binding.pager) { tab, position ->
+        TabLayoutMediator(binding.layoutToolBar.tabLayout, binding.pager) { tab, position ->
             tab.text = TITLES[position]
         }.attach()
 
@@ -51,15 +61,13 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 val user = value!!.toObject(AppUser::class.java)!!
-                binding.imgProfile.load(user.photoUrl) {
+                binding.layoutToolBar.imgProfile.load(user.photoUrl) {
                     crossfade(true)
                     placeholder(R.drawable.ic_baseline_account_circle_24)
                     transformations(CircleCropTransformation())
                 }
             }
-
     }
-
 }
 
 class MyPagerAdapter(activity: FragmentActivity) : FragmentStateAdapter(activity) {
