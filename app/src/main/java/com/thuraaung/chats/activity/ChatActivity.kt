@@ -8,6 +8,9 @@ import coil.load
 import coil.transform.CircleCropTransformation
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.thuraaung.chats.Constants.CHATTING_USER
+import com.thuraaung.chats.Constants.CHAT_PREF
+import com.thuraaung.chats.Constants.DEFAULT_USER
 import com.thuraaung.chats.R
 import com.thuraaung.chats.adapter.ChatAdapter
 import com.thuraaung.chats.databinding.ActivityChatBinding
@@ -72,6 +75,24 @@ class ChatActivity : AppCompatActivity() {
             }
         }
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        saveChattingUser(uid)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        saveChattingUser(DEFAULT_USER)
+    }
+
+    private fun saveChattingUser(uid : String) {
+
+        getSharedPreferences(CHAT_PREF, MODE_PRIVATE).edit().run {
+            putString(CHATTING_USER,uid)
+            apply()
+        }
     }
 
     private fun showUserData() {

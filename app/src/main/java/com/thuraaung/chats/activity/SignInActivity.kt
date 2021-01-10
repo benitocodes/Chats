@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -18,6 +19,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.thuraaung.chats.Constants.APP_USERS
 import com.thuraaung.chats.R
+import com.thuraaung.chats.databinding.ActivitySignInBinding
 import com.thuraaung.chats.model.AppUser
 import java.util.*
 
@@ -30,17 +32,17 @@ class SignInActivity : AppCompatActivity() {
         .build()
 
     private lateinit var googleSignInClient : GoogleSignInClient
-
     private val auth: FirebaseAuth = Firebase.auth
+    private lateinit var binding : ActivitySignInBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_sign_in)
+
+        binding = ActivitySignInBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         googleSignInClient = GoogleSignIn.getClient(this, gso)
-
-        val btnSignIn = findViewById<SignInButton>(R.id.btn_sign_in)
-        btnSignIn.setOnClickListener {
+        binding.btnSignIn.setOnClickListener {
             signIn()
         }
     }

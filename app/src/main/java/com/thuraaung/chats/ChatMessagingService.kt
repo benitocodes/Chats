@@ -2,6 +2,7 @@ package com.thuraaung.chats
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.NotificationManager.IMPORTANCE_DEFAULT
 import android.app.NotificationManager.IMPORTANCE_HIGH
 import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_ONE_SHOT
@@ -14,6 +15,9 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.thuraaung.chats.Constants.CHATTING_USER
+import com.thuraaung.chats.Constants.CHAT_PREF
+import com.thuraaung.chats.Constants.DEFAULT_USER
 import com.thuraaung.chats.Constants.TOKEN
 import com.thuraaung.chats.activity.ChatActivity
 import com.thuraaung.chats.model.Token
@@ -28,27 +32,40 @@ class ChatMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage : RemoteMessage) {
         super.onMessageReceived(remoteMessage)
 
+        val sharedPref = getSharedPreferences(CHAT_PREF, MODE_PRIVATE)
+        val chattingUser = sharedPref.getString(CHATTING_USER,DEFAULT_USER)
+
         val uid = remoteMessage.data["uid"]
-        val title = remoteMessage.data["title"]
-        val message = remoteMessage.data["message"]
 
-        val intent = Intent(this, ChatActivity::class.java)
-        intent.putExtra("uid",uid)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
 
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        createNotificationChannel(notificationManager)
+        if (uid != null && chattingUser != uid) {
+            val title = remoteMessage.data["title"]
+            val message = remoteMessage.data["message"]
 
-        val notificationID = Random.nextInt()
-        val pendingIntent = PendingIntent.getActivity(this,0,intent,FLAG_ONE_SHOT)
-        val notification = NotificationCompat.Builder(this,"Channel")
-            .setContentTitle(title)
-            .setContentText(message)
-            .setSmallIcon(R.drawable.ic_baseline_account_circle_24)
-            .setContentIntent(pendingIntent)
-            .build()
+            val intent = Intent(this, ChatActivity::class.java).apply {
+                putExtra("uid",uid)
+//                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
 
-        notificationManager.notify(notificationID,notification)
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            createNotificationChannel(notificationManager)
+
+            val notificationID = Random.nextInt()
+            val pendingIntent = PendingIntent.getActivity(this,0,intent,FLAG_ONE_SHOT)
+            val notification = NotificationCompat.Builder(this,"Channel")
+                .setContentTitle(title)
+                .setContentText(message)
+                .setSmallIcon(R.drawable.ic_baseline_account_circle_24)
+                .setContentIntent(pendingIntent)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                .setOnlyAlertOnce(true)
+                .setAutoCancel(true)
+                .build()
+
+            notificationManager.notify(notificationID,notification)
+        }
 
     }
 
