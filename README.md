@@ -3,6 +3,8 @@
 
 ### A messaging app using firebase.App users can send messages to each other.
 
+<img src="./img/img.png" width="250" height="550">
+
 ### Libraries used
 
 * [Firebase firestore][0] provides backend services, easy-to-use SDKs, and ready-made UI libraries to authenticate users to your app.  
