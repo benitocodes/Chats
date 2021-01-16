@@ -1,20 +1,16 @@
 package com.thuraaung.chats.vm
 
 import android.util.Log
-import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.thuraaung.chats.Constants.APP_USERS
-import com.thuraaung.chats.Constants.CHAT_INFO
-import com.thuraaung.chats.Constants.CHAT_LIST
-import com.thuraaung.chats.Constants.MESSAGE_LIST
-import com.thuraaung.chats.Constants.TOKEN
-import com.thuraaung.chats.IDGenerator.generateMessageId
+import com.thuraaung.chats.utils.Constants.APP_USERS
+import com.thuraaung.chats.utils.Constants.CHAT_INFO
+import com.thuraaung.chats.utils.Constants.CHAT_LIST
+import com.thuraaung.chats.utils.Constants.MESSAGE_LIST
+import com.thuraaung.chats.utils.Constants.TOKEN
+import com.thuraaung.chats.utils.IDGenerator.generateMessageId
 import com.thuraaung.chats.currentUid
 import com.thuraaung.chats.model.AppUser
 import com.thuraaung.chats.model.Chat
@@ -27,10 +23,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
 
-class ChatViewModel @ViewModelInject constructor(
-    private val auth: FirebaseAuth,
-    private val db: FirebaseFirestore
-) : ViewModel() {
+class ChatViewModel: ViewModel() {
+
+    private val auth = FirebaseAuth.getInstance()
+    private val db = FirebaseFirestore.getInstance()
 
     val messageList = MutableLiveData<List<Message>>()
     private val _chattingUser = MutableLiveData<AppUser>()

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -11,8 +10,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
         android:layout_marginEnd="4dp"
-        android:visibility="gone"
-        android:text="Delivered"
+        android:layout_marginBottom="2dp"
+        android:text="Sent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/materialCardView"
         app:layout_constraintTop_toBottomOf="@+id/materialCardView" />
@@ -28,16 +27,34 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tv_message"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:maxWidth="200dp"
-            android:minWidth="20dp"
-            android:minHeight="20dp"
-            android:text="@string/sample_message"
-            android:textColor="@color/white" />
+            android:orientation="vertical">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:maxWidth="200dp"
+                android:minWidth="20dp"
+                android:minHeight="20dp"
+                android:text="@string/sample_message"
+                android:textColor="@color/white" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_date"
+                android:text="@string/sample_date"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:textColor="@color/white"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+                android:layout_gravity="start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
 
     </com.google.android.material.card.MaterialCardView>
 

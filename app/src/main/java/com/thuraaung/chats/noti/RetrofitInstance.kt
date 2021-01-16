@@ -1,6 +1,6 @@
 package com.thuraaung.chats.noti
 
-import com.thuraaung.chats.Constants.BASE_URL
+import com.thuraaung.chats.utils.Constants.BASE_URL
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 

@@ -1,15 +1,16 @@
 package com.thuraaung.chats.vm
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
-import com.google.firebase.firestore.FirebaseFirestore
-import com.thuraaung.chats.Constants.APP_USERS
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.thuraaung.chats.utils.Constants.APP_USERS
 import com.thuraaung.chats.model.AppUser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class UserViewModel @ViewModelInject constructor(
-    private val db : FirebaseFirestore) : ViewModel() {
+class UserViewModel : ViewModel() {
+
+    private val db = Firebase.firestore
 
     private val _userList = MutableLiveData<List<AppUser>>()
     val userList : LiveData<List<AppUser>> = _userList.distinctUntilChanged()

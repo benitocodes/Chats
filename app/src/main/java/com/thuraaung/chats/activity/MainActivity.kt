@@ -10,25 +10,20 @@ import coil.transform.CircleCropTransformation
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
-import com.thuraaung.chats.Constants.APP_USERS
+import com.thuraaung.chats.utils.Constants.APP_USERS
 import com.thuraaung.chats.R
 import com.thuraaung.chats.databinding.ActivityMainBinding
 import com.thuraaung.chats.frag.ChatListFragment
 import com.thuraaung.chats.frag.UserListFragment
 import com.thuraaung.chats.model.AppUser
-import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
-@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    @Inject
-    lateinit var db: FirebaseFirestore
-    @Inject
-    lateinit var auth: FirebaseAuth
+    private val auth = FirebaseAuth.getInstance()
+    private val db = Firebase.firestore
 
     private lateinit var binding: ActivityMainBinding
 
@@ -41,8 +36,6 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-//        FirebaseMessaging.getInstance().subscribeToTopic(TOPIC)
 
         Firebase.messaging.isAutoInitEnabled = true // enable the token auto initialization
         FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(true)

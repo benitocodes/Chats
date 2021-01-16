@@ -7,25 +7,21 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.thuraaung.chats.Constants.CHATTING_USER
-import com.thuraaung.chats.Constants.CHAT_PREF
-import com.thuraaung.chats.Constants.DEFAULT_USER
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.thuraaung.chats.utils.Constants.CHATTING_USER
+import com.thuraaung.chats.utils.Constants.CHAT_PREF
+import com.thuraaung.chats.utils.Constants.DEFAULT_USER
 import com.thuraaung.chats.R
 import com.thuraaung.chats.adapter.ChatAdapter
 import com.thuraaung.chats.databinding.ActivityChatBinding
 import com.thuraaung.chats.vm.ChatViewModel
-import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 
-@AndroidEntryPoint
 class ChatActivity : AppCompatActivity() {
 
-    @Inject
-    lateinit var auth: FirebaseAuth
-    @Inject
-    lateinit var db: FirebaseFirestore
+    private val auth = FirebaseAuth.getInstance()
+    private val db = Firebase.firestore
 
     private val chatViewModel: ChatViewModel by viewModels()
     private lateinit var binding: ActivityChatBinding

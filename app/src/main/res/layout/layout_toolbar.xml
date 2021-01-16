@@ -42,7 +42,7 @@
                 android:src="@drawable/ic_baseline_search_24"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:contentDescription="@string/profile_image"/>
+                android:contentDescription="@string/search_user"/>
 
         </LinearLayout>
 

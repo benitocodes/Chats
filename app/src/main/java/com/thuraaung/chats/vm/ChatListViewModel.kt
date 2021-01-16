@@ -1,22 +1,22 @@
 package com.thuraaung.chats.vm
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.distinctUntilChanged
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.thuraaung.chats.Constants.CHAT_INFO
-import com.thuraaung.chats.Constants.CHAT_LIST
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.thuraaung.chats.utils.Constants.CHAT_INFO
+import com.thuraaung.chats.utils.Constants.CHAT_LIST
 import com.thuraaung.chats.model.Chat
 import java.util.*
 
-class ChatListViewModel @ViewModelInject constructor(
-    private val auth : FirebaseAuth,
-    private val db : FirebaseFirestore
-): ViewModel() {
+class ChatListViewModel : ViewModel() {
+
+    private val auth = FirebaseAuth.getInstance()
+    private val db = Firebase.firestore
 
     private val _chatDataList = MutableLiveData<List<Chat>>()
     val chatDataList : LiveData<List<Chat>> = _chatDataList.distinctUntilChanged()

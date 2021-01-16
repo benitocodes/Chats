@@ -53,7 +53,7 @@
                 android:inputType="textMultiLine"
                 android:background="@drawable/bg_chatting"
                 android:gravity="center_vertical"
-                android:hint="@string/text_message" />
+                android:hint="@string/type_message_here" />
 
             <ImageButton
                 android:id="@+id/btn_send"

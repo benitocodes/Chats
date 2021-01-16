@@ -1,7 +1,7 @@
 package com.thuraaung.chats.noti
 
-import com.thuraaung.chats.Constants.CONTENT_TYPE
-import com.thuraaung.chats.Constants.SERVER_KEY
+import com.thuraaung.chats.utils.Constants.CONTENT_TYPE
+import com.thuraaung.chats.utils.Constants.SERVER_KEY
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body

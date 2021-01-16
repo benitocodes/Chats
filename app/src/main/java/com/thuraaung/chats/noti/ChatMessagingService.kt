@@ -1,8 +1,7 @@
-package com.thuraaung.chats
+package com.thuraaung.chats.noti
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.NotificationManager.IMPORTANCE_DEFAULT
 import android.app.NotificationManager.IMPORTANCE_HIGH
 import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_ONE_SHOT
@@ -15,11 +14,13 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import com.thuraaung.chats.Constants.CHATTING_USER
-import com.thuraaung.chats.Constants.CHAT_PREF
-import com.thuraaung.chats.Constants.DEFAULT_USER
-import com.thuraaung.chats.Constants.TOKEN
+import com.thuraaung.chats.utils.Constants.CHATTING_USER
+import com.thuraaung.chats.utils.Constants.CHAT_PREF
+import com.thuraaung.chats.utils.Constants.DEFAULT_USER
+import com.thuraaung.chats.utils.Constants.TOKEN
+import com.thuraaung.chats.R
 import com.thuraaung.chats.activity.ChatActivity
+import com.thuraaung.chats.currentUid
 import com.thuraaung.chats.model.Token
 import kotlin.random.Random
 
@@ -44,8 +45,7 @@ class ChatMessagingService : FirebaseMessagingService() {
 
             val intent = Intent(this, ChatActivity::class.java).apply {
                 putExtra("uid",uid)
-//                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             }
 
             val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

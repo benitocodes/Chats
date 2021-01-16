@@ -1,4 +1,4 @@
-package com.thuraaung.chats
+package com.thuraaung.chats.utils
 
 import android.annotation.SuppressLint
 import java.text.SimpleDateFormat

@@ -3,19 +3,18 @@ package com.thuraaung.chats.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.thuraaung.chats.Constants.APP_USERS
+import com.thuraaung.chats.utils.Constants.APP_USERS
 import com.thuraaung.chats.R
 import com.thuraaung.chats.databinding.LayoutLeftMessageBinding
 import com.thuraaung.chats.databinding.LayoutRightMessageBinding
 import com.thuraaung.chats.model.AppUser
 import com.thuraaung.chats.model.Message
+import com.thuraaung.chats.utils.DateFormatter
 
 class ChatAdapter(
     private val auth : FirebaseAuth,
@@ -69,6 +68,7 @@ class ChatAdapter(
 
         fun bind(message : Message) {
             binding.tvMessage.text = message.message
+            binding.tvDate.text = DateFormatter.formatDate(message.date)
             db.collection(APP_USERS)
                 .document(message.sender)
                 .addSnapshotListener { value, error ->
@@ -99,6 +99,7 @@ class ChatAdapter(
                 binding.tvStatus.visibility = View.GONE
             }
             binding.tvMessage.text = message.message
+            binding.tvDate.text = DateFormatter.formatDate(message.date)
         }
     }
 

@@ -9,18 +9,18 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.thuraaung.chats.activity.ChatActivity
 import com.thuraaung.chats.adapter.UserAdapter
 import com.thuraaung.chats.databinding.FragmentUserListBinding
 import com.thuraaung.chats.vm.UserViewModel
-import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
-@AndroidEntryPoint
 class UserListFragment : Fragment() {
 
-    @Inject
-    lateinit var auth : FirebaseAuth
+    private val auth = FirebaseAuth.getInstance()
+    private val db = Firebase.firestore
+
     private val viewModel : UserViewModel by viewModels()
     private val userAdapter = UserAdapter { user ->
         val intent = Intent(context,ChatActivity::class.java)

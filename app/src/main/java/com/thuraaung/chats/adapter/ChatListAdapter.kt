@@ -12,12 +12,13 @@ import coil.transform.CircleCropTransformation
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.thuraaung.chats.Constants.APP_USERS
-import com.thuraaung.chats.Constants.CHAT_INFO
-import com.thuraaung.chats.Constants.CHAT_LIST
-import com.thuraaung.chats.Constants.MESSAGE_LIST
-import com.thuraaung.chats.DateFormatter
+import com.thuraaung.chats.utils.Constants.APP_USERS
+import com.thuraaung.chats.utils.Constants.CHAT_INFO
+import com.thuraaung.chats.utils.Constants.CHAT_LIST
+import com.thuraaung.chats.utils.Constants.MESSAGE_LIST
+import com.thuraaung.chats.utils.DateFormatter
 import com.thuraaung.chats.R
+import com.thuraaung.chats.databinding.LayoutChatListItemBinding
 import com.thuraaung.chats.model.AppUser
 import com.thuraaung.chats.model.Chat
 import com.thuraaung.chats.model.Message
@@ -31,8 +32,9 @@ class ChatListAdapter(
     private var uidList = emptyList<Chat>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatListViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.layout_room_list_item,parent,false)
+
+        val view = LayoutChatListItemBinding
+            .inflate(LayoutInflater.from(parent.context),parent,false)
         return ChatListViewHolder(view)
     }
 
@@ -47,21 +49,15 @@ class ChatListAdapter(
         notifyDataSetChanged()
     }
 
-    inner class ChatListViewHolder(view : View) : RecyclerView.ViewHolder(view) {
-
-        private val imgUser = view.findViewById<ImageView>(R.id.img_user)
-        private val tvMessage = view.findViewById<TextView>(R.id.tv_message)
-        private val tvUserName = view.findViewById<TextView>(R.id.tv_user_name)
-        private val imgStatus = view.findViewById<ImageView>(R.id.img_status)
-        private val tvChatDate = view.findViewById<TextView>(R.id.tv_chat_date)
+    inner class ChatListViewHolder(private val binding : LayoutChatListItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
         init {
-            view.setOnClickListener { clickListener?.invoke(uidList[adapterPosition]) }
+            binding.root.setOnClickListener { clickListener?.invoke(uidList[adapterPosition]) }
         }
 
         fun bind(chat : Chat) {
 
-            tvChatDate.text = DateFormatter.formatDate(chat.date)
+            binding.tvChatDate.text = DateFormatter.formatDate(chat.date)
 
             db.collection(APP_USERS)
                 .document(chat.uid)
@@ -71,9 +67,9 @@ class ChatListAdapter(
                     }
 
                     val appUser = value!!.toObject(AppUser::class.java)!!
-                    tvUserName.text = appUser.name
+                    binding.tvUserName.text = appUser.name
 
-                    imgUser.load(appUser.photoUrl) {
+                    binding.imgUser.load(appUser.photoUrl) {
                         crossfade(true)
                         placeholder(R.drawable.ic_baseline_account_circle_24)
                         transformations(CircleCropTransformation())
@@ -98,14 +94,14 @@ class ChatListAdapter(
 
                             val message = data.toObject(Message::class.java)
                             if (auth.currentUser!!.uid != message.sender && !message.seen) {
-                                imgStatus.visibility = View.VISIBLE
-                                tvMessage.setTextColor(context.getColor(R.color.black_900))
+                                binding.imgStatus.visibility = View.VISIBLE
+                                binding.tvMessage.setTextColor(context.getColor(R.color.black_900))
                             } else {
-                                imgStatus.visibility = View.INVISIBLE
-                                tvMessage.setTextColor(context.getColor(R.color.grey_700))
+                                binding.imgStatus.visibility = View.INVISIBLE
+                                binding.tvMessage.setTextColor(context.getColor(R.color.grey_700))
                             }
 
-                            tvMessage.text = message.message
+                            binding.tvMessage.text = message.message
                         }
 
                     }

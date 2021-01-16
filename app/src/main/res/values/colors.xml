@@ -5,6 +5,8 @@
     <color name="blue_700">#1976d2</color>
     <color name="black_900">#212121</color>
     <color name="grey_200">#eeeeee</color>
+    <color name="grey_400">#bdbdbd</color>
     <color name="grey_700">#616161</color>
+    <color name="blue_grey_500">#607d8b</color>
 
 </resources>
